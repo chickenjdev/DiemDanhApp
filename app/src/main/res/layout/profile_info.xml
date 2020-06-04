@@ -24,15 +24,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/topView" />
 
-    <ImageView
-        android:id="@+id/imageView"
+    <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/view"
-        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintBottom_toBottomOf="@+id/topView"
+        app:layout_constraintEnd_toEndOf="@+id/topView"
+        app:layout_constraintStart_toStartOf="@+id/topView"
         app:layout_constraintTop_toBottomOf="@+id/topView"
         app:srcCompat="@drawable/profile_user"
-        tools:ignore="VectorDrawableCompat" />
+        tools:ignore="MissingConstraints" />
+    
 
     <TextView
         android:id="@+id/topText"
@@ -165,19 +166,67 @@
 
     <Button
         android:id="@+id/buttonBot"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/round_bg"
-        android:text=" Edit profile"
+        android:text="Điểm danh"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
         android:textSize="25sp"
         android:textStyle="bold"
-        style="?android:attr/borderlessButtonStyle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="645dp"
+        android:background="#FFFFFF"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.ActionMenuView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/but_bot1"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_bg_white"
+                android:drawableStart="@drawable/ic_baseline_access_time_48"
+                android:drawableLeft="@drawable/ic_baseline_access_time_48">
+
+            </Button>
+
+            <Button
+                android:id="@+id/but_bot2"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_bg_white"
+                android:drawableStart="@drawable/ic_baseline_score_48"
+                android:drawableLeft="@drawable/ic_baseline_score_48">
+
+            </Button>
+
+            <Button
+                android:id="@+id/but_bot3"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_bg_white"
+                android:drawableStart="@drawable/ic_person_black_48dp"
+                android:drawableLeft="@drawable/ic_person_black_48dp">
+
+            </Button>
+
+        </androidx.appcompat.widget.ActionMenuView>
+
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
