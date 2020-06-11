@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:enabled="true"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/person_24"
+        android:title="@string/person" />
+    <item
+        android:id="@+id/nav_score"
+        android:enabled="true"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/score_24"
+        android:title="@string/score" />
+    <item
+        android:id="@+id/nav_tkb"
+        android:enabled="true"
+        android:icon="@drawable/time_24"
+        app:showAsAction="ifRoom"
+        android:title="@string/tkb" />
+    
+
+</menu>

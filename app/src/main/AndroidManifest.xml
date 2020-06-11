@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:label="@string/app_name"
+            android:label="LoginActivity"
             android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +21,11 @@
         <activity
             android:name=".ProfileActivity"
             android:label="Profile Activity">
+
+        </activity>
+        <activity android:name=".Notification"
+
+            android:label="Notification">
 
         </activity>
     </application>
