@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.style.UpdateLayout;
 import android.util.Log;
 import android.view.Display;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -13,8 +14,15 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
-public class ProfileActivity  extends Activity{
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+
+public class ProfileActivity  extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +51,9 @@ public class ProfileActivity  extends Activity{
         });
 
 
-    }   @Override
+    }
+    
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
     }
