@@ -5,34 +5,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <FrameLayout
-        android:id="@+id/fragment"
+        android:id="@+id/scrollLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/bottom_navigation">
+
         <ScrollView
+            android:id="@+id/scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
+
                 <View
                     android:id="@+id/topView"
                     android:layout_width="wrap_content"
                     android:layout_height="150dp"
-                    android:background="@color/colorPrimary"
+                    android:background="@drawable/gradient"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-                <View
-                    android:id="@+id/view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100dp"
-                    android:background="@drawable/wave"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/topView" />
+
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/appCompatImageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintBottom_toBottomOf="@+id/topView"
@@ -41,87 +39,88 @@
                     app:layout_constraintTop_toBottomOf="@+id/topView"
                     app:srcCompat="@drawable/profile_user"
                     tools:ignore="MissingConstraints" />
+
                 <Button
                     android:id="@+id/buttonTop"
                     style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@color/colorPrimary"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
                     android:drawableStart="@drawable/arrow_back"
                     android:drawableLeft="@drawable/arrow_back"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:ignore="MissingConstraints" />
+
                 <Button
                     android:id="@+id/buttonTop2"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
                     style="?android:attr/borderlessButtonStyle"
-                    android:layout_marginRight="8dp"
-                    android:background="@color/colorPrimary"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
                     android:drawableStart="@drawable/ic_notifications_48"
+                    android:drawableLeft="@drawable/ic_notifications_48"
                     app:layout_constraintEnd_toEndOf="@+id/topView"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="MissingConstraints"
-                    android:drawableLeft="@drawable/ic_notifications_48" />
+                    tools:ignore="MissingConstraints" />
+
                 <TextView
-                    android:id="@+id/textView1"
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:id="@+id/txtFullname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="120dp"
-                    android:layout_marginLeft="120dp"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="120dp"
-                    android:layout_marginRight="120dp"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
-                    android:text="AnnaAvetisyan"
+                    android:text="Fullname"
                     android:textColor="@color/colorAccent"
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/view" />
+                    app:layout_constraintTop_toBottomOf="@+id/appCompatImageView" />
+
                 <TextView
-                    android:id="@+id/textView7"
-                    android:layout_width="0dp"
+                    android:id="@+id/txtStdCode"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="120dp"
-                    android:layout_marginLeft="120dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginEnd="120dp"
-                    android:layout_marginRight="120dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:text="17A520 | Sinh Viên "
+                    android:text="MSSV | Sinh Viên "
                     android:textAllCaps="false"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView1" />
+                    app:layout_constraintTop_toBottomOf="@+id/txtFullname"
+                    tools:ignore="MissingConstraints" />
+
                 <TextView
-                    android:id="@+id/text1"
+                    android:id="@+id/txtEmail"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="30dp"
                     android:drawableStart="@drawable/ic_email_black_48dp"
                     android:drawableLeft="@drawable/ic_email_black_48dp"
                     android:drawablePadding="32dp"
                     android:paddingLeft="16dp"
-                    android:text="17A520@gmail.com"
+                    android:text="Email "
                     android:textColor="@android:color/black"
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView7" />
+                    app:layout_constraintTop_toBottomOf="@+id/txtStdCode" />
+
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/txtDOB"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
@@ -129,14 +128,15 @@
                     android:drawableLeft="@drawable/ic_birthday_cake"
                     android:drawablePadding="32dp"
                     android:paddingLeft="16dp"
-                    android:text="Birthday"
+                    android:text="DOB"
                     android:textColor="@android:color/black"
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/text1" />
+                    app:layout_constraintTop_toBottomOf="@+id/txtEmail" />
+
                 <TextView
-                    android:id="@+id/textView2"
+                    android:id="@+id/txtFaculty"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
@@ -145,14 +145,33 @@
                     android:drawablePadding="32dp"
                     android:fallbackLineSpacing="false"
                     android:paddingLeft="16dp"
-                    android:text="Hệ thống thông tin"
+                    android:text="Faculty"
                     android:textColor="@android:color/black"
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView" />
+                    app:layout_constraintTop_toBottomOf="@+id/txtDOB" />
+
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/txtClass"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:drawableStart="@drawable/ic_portfolio"
+                    android:drawableLeft="@drawable/ic_portfolio"
+                    android:drawablePadding="32dp"
+                    android:fallbackLineSpacing="false"
+                    android:paddingLeft="16dp"
+                    android:text="Class"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtYearCode" />
+
+                <TextView
+                    android:id="@+id/txtYearCode"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
@@ -160,12 +179,30 @@
                     android:drawableLeft="@drawable/ic_class_black_48dp"
                     android:drawablePadding="32dp"
                     android:paddingLeft="12dp"
-                    android:text="2017"
+                    android:text="YearCode"
                     android:textColor="@android:color/black"
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                    app:layout_constraintTop_toBottomOf="@+id/txtFaculty" />
+
+                <TextView
+                    android:id="@+id/txtPhone"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:drawableStart="@drawable/ic_class_black_48dp"
+                    android:drawableLeft="@drawable/ic_class_black_48dp"
+                    android:drawablePadding="32dp"
+                    android:paddingLeft="12dp"
+                    android:text="Phone    "
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtClass" />
+
                 <Button
                     android:id="@+id/buttonBot"
                     style="?android:attr/borderlessButtonStyle"
@@ -173,14 +210,17 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/round_bg"
-                    android:text="Điểm danh"
+                    android:text="Update"
                     android:textAllCaps="false"
                     android:textColor="@android:color/white"
                     android:textSize="25sp"
                     android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.496"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                    app:layout_constraintTop_toBottomOf="@+id/txtPhone"
+                    app:layout_constraintVertical_bias="1.0" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
     </FrameLayout>

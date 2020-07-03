@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "741100726722",
+    "firebase_url": "https://diemdanhandroid.firebaseio.com",
+    "project_id": "diemdanhandroid",
+    "storage_bucket": "diemdanhandroid.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:741100726722:android:29f5561ba28002db53ce5b",
+        "android_client_info": {
+          "package_name": "com.app.diemdanhapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "741100726722-tt24hrd6tubr1mj0e0srn9usb8lubuao.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.diemdanhapp",
+            "certificate_hash": "af7c2f9cef8cc62ec5522c0ea2a33e7107f527f6"
+          }
+        },
+        {
+          "client_id": "741100726722-61kn1bmqcl7nb6dk53bat98hs204jt6v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwVDkFBwlrrJKxi8G_9gGAJ1jldix03lU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "741100726722-61kn1bmqcl7nb6dk53bat98hs204jt6v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

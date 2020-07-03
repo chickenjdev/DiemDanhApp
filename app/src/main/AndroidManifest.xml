@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.diemdanhapp">
+    package="com.app.diemdanhapp">
 
     <application
         android:allowBackup="true"
@@ -10,21 +10,25 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:label="LoginActivity"
-            android:name=".LoginActivity">
+            android:name="com.app.diemdanhapp.LoginActivity"
+            android:label="LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".ProfileActivity"
+            android:name="com.app.diemdanhapp.ProfileActivity"
             android:label="Profile Activity">
 
         </activity>
-        <activity android:name=".Notification"
+        <activity
+            android:name="com.app.diemdanhapp.Notification"
+            android:label="Notification">
 
+        </activity>
+        <activity
+            android:name="com.app.diemdanhapp.DashboardActivity"
             android:label="Notification">
 
         </activity>
