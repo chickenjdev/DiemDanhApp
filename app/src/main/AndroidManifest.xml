@@ -16,12 +16,14 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name="com.app.diemdanhapp.ProfileActivity"
             android:label="Profile Activity">
 
         </activity>
+
         <activity
             android:name="com.app.diemdanhapp.Notification"
             android:label="Notification">
@@ -29,9 +31,10 @@
         </activity>
         <activity
             android:name="com.app.diemdanhapp.DashboardActivity"
-            android:label="Notification">
 
+            android:label="Notification">
         </activity>
+
     </application>
 
 </manifest>
