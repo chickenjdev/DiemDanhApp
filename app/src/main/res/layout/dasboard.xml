@@ -28,7 +28,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/txtTittle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -80,7 +80,7 @@
                 app:tabTextColor="#EADDDD">
 
                 <com.google.android.material.tabs.TabItem
-                    android:id="@+id/tabMyClass"
+                    android:id="@+id/tabTit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:icon="?attr/actionModeSelectAllDrawable"

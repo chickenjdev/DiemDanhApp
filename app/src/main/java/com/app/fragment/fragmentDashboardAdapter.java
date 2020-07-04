@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.app.diemdanhapp.R;
 import com.app.model.fragmentDashboardModel;
+import com.app.model.userInfo;
 
 public class fragmentDashboardAdapter extends FragmentPagerAdapter {
 
@@ -75,12 +76,14 @@ public class fragmentDashboardAdapter extends FragmentPagerAdapter {
 
             switch (getArguments().getInt(KEY)) {
                 case 1:
-                    fragmentDashModel.getDataMyClass();
-                    fragmentDashModel.addSubject(scrollLayout);
+                    if(userInfo.getType().equals("std")){
+                        fragmentDashModel.getDataMyClass(scrollLayout);
+                    }else if(userInfo.getType().equals("teacher")){
+                        fragmentDashModel.getDataClassTeacher(scrollLayout);
+                    }
                     break;
                 case 2:
-                    fragmentDashModel.getDataAllClass();
-                    fragmentDashModel.addSubject(scrollLayout);
+                    fragmentDashModel.getDataAllClass(scrollLayout);
                     break;
                 default:
                     break;

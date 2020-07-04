@@ -13,6 +13,7 @@ public class userInfo {
     private static String full_name = "Ho va ten";
     private static String phone;
     private static String year_code;
+    private static String type ="std";
 
     public userInfo(Map<String, Object> data){
 
@@ -23,9 +24,17 @@ public class userInfo {
         setFaculty((String) data.get("faculty"));
         setPhone((String) data.get("phone"));
         setYear_code((String) data.get("year_code"));
+        setType((String) data.get("type"));
         Log.d("CRE",getFull_name() +"");
     }
 
+    public static String getType() {
+        return type;
+    }
+
+    public static void setType(String type) {
+        userInfo.type = type;
+    }
     public static String getUsername() {
         return username;
     }

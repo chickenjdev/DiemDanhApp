@@ -67,7 +67,7 @@ public class loginModel {
                     } else {
                         Log.d("CRE", "Khong tim thay data " + username);
                         onFirstLogin(username);
-                        updateUI(1);
+
                     }
                 } else {
                     Log.d("CRE", "get failed with ", task.getException());
@@ -78,7 +78,7 @@ public class loginModel {
     public void onFirstLogin(String username){
         db = FirebaseFirestore.getInstance();
 
-        Map<String, Object> user = new HashMap<>();
+        final Map<String, Object> user = new HashMap<>();
         user.put("faculty", "");
         user.put("class", "");
         user.put("code", username);
@@ -89,13 +89,14 @@ public class loginModel {
         user.put("type","std");
         user.put("enroll",new ArrayList<>());
 
-
         db.collection("users").document(username)
                 .set(user)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("CRE", "UserInfo successfully written!");
+                        new userInfo(user);
+                        updateUI(1);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

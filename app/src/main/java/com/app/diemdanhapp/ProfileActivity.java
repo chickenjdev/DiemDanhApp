@@ -17,6 +17,7 @@ public class ProfileActivity  extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile);
+
         txtFullname = (TextView)findViewById(R.id.txtFullname);
 
         txtFullname.setText(userInfo.getFull_name());
