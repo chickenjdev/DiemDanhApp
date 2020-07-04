@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.app.diemdanhapp">
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-feature android:name="android.hardware.location.gps" />
 
     <application
         android:allowBackup="true"
@@ -12,6 +15,7 @@
         <activity
             android:name="com.app.diemdanhapp.LoginActivity"
             android:label="LoginActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -30,15 +34,27 @@
         </activity>
         <activity
             android:name="com.app.diemdanhapp.ClassActivity"
-            android:label="Notification">
+            android:label="ClassActivity">
 
         </activity>
         <activity
             android:name="com.app.diemdanhapp.DashboardActivity"
 
-            android:label="Notification">
+            android:label="DashboardActivity">
+        </activity>
+        <activity
+            android:name="com.app.diemdanhapp.AttendActivity"
+
+            android:label="AttendActivity">
+
         </activity>
 
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

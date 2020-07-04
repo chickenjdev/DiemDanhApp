@@ -160,11 +160,12 @@ public class fragmentDashboardModel {
 
 
             if (index % 2 == 0) {
-                newCardView.setBackgroundResource(R.drawable.rounded_corner);
+//                newCardView.setBackgroundResource(R.drawable.rounded_corner);
+                newCardView.setBackgroundColor(Color.parseColor("#ff7f00"));
             } else {
-                newCardView.setBackgroundResource(R.drawable.rounded_corner2);
+//                newCardView.setBackgroundResource(R.drawable.rounded_corner2);
+                newCardView.setBackgroundColor(Color.parseColor("#00a1ff"));
             }
-
 
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
