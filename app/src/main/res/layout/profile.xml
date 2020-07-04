@@ -186,7 +186,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txtFaculty" />
 
-                <TextView
+                <EditText
                     android:id="@+id/txtPhone"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
@@ -194,14 +194,35 @@
                     android:drawableStart="@drawable/ic_class_black_48dp"
                     android:drawableLeft="@drawable/ic_class_black_48dp"
                     android:drawablePadding="32dp"
+                    android:enabled="false"
                     android:paddingLeft="12dp"
                     android:text="Phone    "
                     android:textColor="@android:color/black"
                     android:textSize="20sp"
+                    android:background="@null"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtClass" />
+                    app:layout_constraintTop_toBottomOf="@+id/txtClass"
+                    tools:ignore="TextFields" />
+                <EditText
+                    android:id="@+id/txtAccommodation"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:enabled="false"
+                    android:background="@null"
+                    android:text="Accommodation"
+                    android:drawableStart="@drawable/ic_baseline_home"
+                    android:drawablePadding="32dp"
+                    android:drawableLeft="@drawable/ic_baseline_home"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:paddingLeft="12dp"
+                    android:textColor="@android:color/black"
+                    app:layout_constraintTop_toBottomOf="@+id/txtPhone"
+                    tools:ignore="MissingConstraints" />
 
                 <Button
                     android:id="@+id/buttonBot"
@@ -219,7 +240,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.496"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtPhone"
+                    app:layout_constraintTop_toBottomOf="@+id/txtAccommodation"
                     app:layout_constraintVertical_bias="1.0" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
