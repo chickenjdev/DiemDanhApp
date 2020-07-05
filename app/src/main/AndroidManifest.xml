@@ -48,6 +48,12 @@
             android:label="AttendActivity">
 
         </activity>
+        <activity
+            android:name="com.app.diemdanhapp.AttendCreActivity"
+
+            android:label="AttendCreActivity">
+
+        </activity>
 
         <meta-data
             android:name="com.google.android.gms.version"

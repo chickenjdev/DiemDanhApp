@@ -18,8 +18,8 @@ public class userInfo {
     public userInfo(Map<String, Object> data){
 
         setFull_name((String) data.get("full_name"));
+        setCode(((String) data.get("code")).replace("@uit.edu.vn",""));
         setUsername((String) data.get("code"));
-        setCode((String) data.get("code"));
         setDob((String) data.get("dob"));
         setFaculty((String) data.get("faculty"));
         setPhone((String) data.get("phone"));

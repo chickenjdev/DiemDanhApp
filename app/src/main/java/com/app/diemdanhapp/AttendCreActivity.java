@@ -9,9 +9,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.DialogFragment;
 
 import com.app.model.userInfo;
 import com.google.android.gms.common.ConnectionResult;
@@ -36,24 +39,19 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-public class AttendActivity extends AppCompatActivity
+public class AttendCreActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
+
+
 
     FirebaseFirestore db;
 
     String classCode;
-    String[] arrStd;
-    Map<String, String> mapStdAttendInfo;
+    String gps;
+    boolean showCurGps = true;
 
     private Location location;
     private TextView txtLocation, txtCode, txtSession;
@@ -81,19 +79,17 @@ public class AttendActivity extends AppCompatActivity
         btnBack = findViewById(R.id.btnBack);
         btnAction = findViewById(R.id.btnAction);
 
-        classCode = getIntent().getStringExtra("CLASS_CODE");
-
         //add permissions , request location of the users
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
 
         permissionsToRequest = permissionsToRequest(permissions);
 
+        classCode = getIntent().getStringExtra("CLASS_CODE");
+
         getLocation();
         checkAttend(classCode);
 
-//        getLocation();
-//        getScanQR();
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +97,32 @@ public class AttendActivity extends AppCompatActivity
                 finish();
             }
         });
+
+    }
+
+    public void getInputCode(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Nhập code điểm danh ");
+
+        final EditText input = new EditText(this);
+        input.setPadding(20,10,10,20);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                txtCode.setText("Code: " + input.getText());
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
 
     }
 
@@ -124,29 +146,32 @@ public class AttendActivity extends AppCompatActivity
 //                }
 //            }
 //        });
-        final DocumentReference docRef2 = db.collection("enroll").document(classCode);
-        docRef2.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        db.collection("enroll").document(classCode)
+        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w("FIRE", "Listen failed.", e);
-                    return;
-                }
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
                 // Kiem tra lop diem danh da duoc tao hay chua
-                if (snapshot != null && snapshot.exists()) {
-//                    int session = Integer.parseInt((String)snapshot.getData().get("session"));
-                    Long session = (Long) snapshot.getData().get("session");
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    Long session = (Long) document.getData().get("session");
+                    Long sessionCount = (Long) document.getData().get("sessionCount");
                     Log.d("FIRE", "Current data: " + "session " + session);
                     if (session == 0) {
-                        txtSession.setText("");
-                        btnAction.setText("Not Open");
+//                        getLocation();
+                        txtSession.setText("Buổi "+ (sessionCount+1));
+                        btnAction.setText("Start ! ");
+                        getInputCode();
+
                     } else if (session != 0) {
                         txtSession.setText("Buổi " + session);
+                        showCurGps = false;
+                        txtLocation.setText("get location on database");
 //                        getScanQR();
-                        getAttendResult(session);
+//                        getAttendResult(session);
                     }
                 } else {
+//                    getLocation();
                     Log.d("FIRE", "Current data: null");
                     btnAction.setText("Not Open");
                 }
@@ -154,47 +179,8 @@ public class AttendActivity extends AppCompatActivity
         });
     }
 
-    public void getAttendResult(Long session) {
-        db.collection("enroll").document(classCode).collection("std").document(session + "")
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-
-                        // get student list in confirmed
-                        arrStd = getStudentList(document.getData().get("student").toString());
-                        Log.d("FIRE", "check class attend: " + userInfo.getCode() + " - " + Arrays.asList(arrStd).contains(userInfo.getCode()));
-
-                        // Neu da diem danh thanh cong
-                        if (Arrays.asList(arrStd).contains(userInfo.getCode())) {
-                            btnAction.setText("Confirmed !");
-
-                            // lay chi chi tiet diem danh
-                            try {
-                            mapStdAttendInfo = ((HashMap<String, Map>) document.getData().get("std_attent")).get(userInfo.getCode());
-                                Log.d("FIRE", "get attend info " + mapStdAttendInfo.get("code"));
-                                txtCode.setText(mapStdAttendInfo.get("code"));
-                                txtLocation.setText("gps : " + mapStdAttendInfo.get("location"));
-                            }catch (Exception e){};
-                        } else {
-                            // Chua diem danh
-                            btnAction.setText("Submit");
-                            getScanQR();
-                        }
-                    } else {
-                        btnAction.setText("Not Open");
-                        Log.d("FIRE", "Khong tim thay data " + classCode);
-                    }
-                } else {
-                    Log.d("FIRE", "get failed with ", task.getException());
-                }
-            }
-        });
-    }
-
     public void getLocation() {
+        btnAction.setText("Start !!!! ");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (permissionsToRequest.size() > 0) {
                 requestPermissions(permissionsToRequest.toArray(
@@ -207,55 +193,6 @@ public class AttendActivity extends AppCompatActivity
                 addApi(LocationServices.API).
                 addConnectionCallbacks(this).
                 addOnConnectionFailedListener(this).build();
-    }
-
-    public void getScanQR() {
-        try {
-            Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-            intent.putExtra("SCAN_MODE", "QR_CODE_MODE"); // "PRODUCT_MODE : bar codes
-
-            startActivityForResult(intent, 0);
-        } catch (Exception e) {
-            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(AttendActivity.this);
-            builder.setMessage("Bạn cần cài đặt QR SCANER để quét mã điểm danh");
-            builder.setTitle("Thông báo !");
-            builder.setCancelable(false);
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Uri marketUri = Uri.parse("market://details?id=com.google.zxing.client.android");
-                    Intent marketIntent = new Intent(Intent.ACTION_VIEW, marketUri);
-                    startActivity(marketIntent);
-                    finish();
-                }
-            });
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                    finish();
-                }
-            });
-            android.app.AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-
-
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 0) {
-            if (resultCode == RESULT_OK) {
-                String contents = data.getStringExtra("SCAN_RESULT");
-                txtCode.setText("Code : " + contents);
-            }
-            if (resultCode == RESULT_CANCELED) {
-//                Toast.makeText(AttendActivity.this, "Quét mã QR không thành công", Toast.LENGTH_LONG).show();
-                txtCode.setText("Code : " + "Quét mã QR không thành công");
-            }
-        }
     }
 
     private ArrayList<String> permissionsToRequest(ArrayList<String> wantedPermissions) {
@@ -336,8 +273,9 @@ public class AttendActivity extends AppCompatActivity
         // Permissions ok, we get last location
         location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
-        if (location != null) {
-            txtLocation.setText("Gps : " + location.getLatitude() + "," + location.getLongitude());
+        if (location != null && showCurGps) {
+            txtLocation.setText("Latitude : " + location.getLatitude() + "\nLongitude : " + location.getLongitude());
+            Log.d("CRE","Latitude : " + location.getLatitude() + "Longitude : " + location.getLongitude());
         }
 
         startLocationUpdates();
@@ -369,8 +307,9 @@ public class AttendActivity extends AppCompatActivity
 
     @Override
     public void onLocationChanged(Location location) {
-        if (location != null) {
-            txtLocation.setText("Gps : " + location.getLatitude() + "," + location.getLongitude());
+        if (location != null && showCurGps) {
+            txtLocation.setText("Latitude : " + location.getLatitude() + "\nLongitude : " + location.getLongitude());
+            Log.d("CRE","Latitude : " + location.getLatitude() + "Longitude : " + location.getLongitude());
         }
     }
 
@@ -387,7 +326,7 @@ public class AttendActivity extends AppCompatActivity
                 if (permissionsRejected.size() > 0) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         if (shouldShowRequestPermissionRationale(permissionsRejected.get(0))) {
-                            new AlertDialog.Builder(AttendActivity.this).
+                            new AlertDialog.Builder(AttendCreActivity.this).
                                     setMessage("These permissions are mandatory to get your location. You need to allow them.").
                                     setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         @Override
@@ -410,23 +349,5 @@ public class AttendActivity extends AppCompatActivity
 
                 break;
         }
-    }
-
-    public String[] getStudentList(String str) {
-        JSONArray jsonArray = null;
-        try {
-            jsonArray = new JSONArray(str);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        String[] strArr = new String[jsonArray.length()];
-        for (int i = 0; i < jsonArray.length(); i++) {
-            try {
-                strArr[i] = jsonArray.getString(i);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return strArr;
     }
 }

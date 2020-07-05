@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -23,7 +24,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,15 +128,14 @@ public class fragmentDashboardModel {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d("FIRE", "Class : ========= "+ document.getId()+" " + document.getData());
-
                                 String time = "Thứ "+((HashMap<String,Number>)document.getData().get("time")).get("day")+" : "
                                         +((HashMap<String,Number>)document.getData().get("time")).get("time")+" Giờ, "
                                         +((HashMap<String,Number>)document.getData().get("time")).get("duration")+" Tiết";
 
                                 String [] obj = {document.getId()
                                         ,(String)document.getData().get("sub_name")
-                                        ,time};
-
+                                        ,time
+                                        ,document.getData().get("student").toString()};
                                 subListMyClass.add(obj);
                             }
 
@@ -150,7 +152,7 @@ public class fragmentDashboardModel {
 
     }
 
-    public void addSubject(LinearLayout scrollLayout,List<Object> subList){
+    public void addSubject(LinearLayout scrollLayout, final List<Object> subList){
         for(int index = 0; index < subList.size(); index++) {
 
             LinearLayout newCardView = new LinearLayout(this.context);
@@ -200,17 +202,18 @@ public class fragmentDashboardModel {
             newCardView.addView(txtName,1);
             newCardView.addView(txtTime,2);
 
+            final Object childList = subList.get(index);
             newCardView.setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View v) {
                     View code = ((ViewGroup)v).getChildAt(0);
-                    String textCode = ((TextView) code).getText().toString();
-                    Toast.makeText(context,"click " + textCode,Toast.LENGTH_LONG).show();
+                    String classCode = ((TextView) code).getText().toString();
+                    Toast.makeText(context,"click " + classCode,Toast.LENGTH_LONG).show();
                     boolean enrolled = false;
                     int i = 0;
                     while (!enrolled && i<subListMyClass.size()){
-                        if(((String[])subListMyClass.get(i))[0].equals(textCode)){
+                        if(((String[])subListMyClass.get(i))[0].equals(classCode)){
                             enrolled = true;
                         }
                         i++;
@@ -218,7 +221,8 @@ public class fragmentDashboardModel {
                    if(enrolled){
                        Log.d("CRE","enrolled");
                        Intent classActivity = new Intent(context, ClassActivity.class);
-                       classActivity.putExtra("CLASS_CODE", textCode);
+                       classActivity.putExtra("CLASS_CODE", classCode);
+                       classActivity.putExtra("CLASS_INFO", (Serializable) childList);
                        context.startActivity(classActivity);
                    }else {
                        Log.d("CRE","new class");
