@@ -54,6 +54,12 @@
             android:label="AttendCreActivity">
 
         </activity>
+        <activity
+            android:name="com.app.diemdanhapp.QRCodeActivity"
+
+            android:label="QRCodeActivity">
+
+        </activity>
 
         <meta-data
             android:name="com.google.android.gms.version"

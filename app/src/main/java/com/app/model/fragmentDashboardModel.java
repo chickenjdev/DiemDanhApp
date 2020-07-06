@@ -209,7 +209,7 @@ public class fragmentDashboardModel {
                 public void onClick(View v) {
                     View code = ((ViewGroup)v).getChildAt(0);
                     String classCode = ((TextView) code).getText().toString();
-                    Toast.makeText(context,"click " + classCode,Toast.LENGTH_LONG).show();
+//                    Toast.makeText(context,"click " + classCode,Toast.LENGTH_LONG).show();
                     boolean enrolled = false;
                     int i = 0;
                     while (!enrolled && i<subListMyClass.size()){

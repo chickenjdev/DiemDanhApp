@@ -35,7 +35,7 @@ public class ClassActivity extends Activity {
 
     FirebaseFirestore db;
     TextView txtSubCode, txtTittle, txtSubName, txtSubTime, txtTchName, txtStdCount;
-    Button btnDiemdanh;
+    Button btnDiemdanh, btnBack;
     TabLayout tablayoutDashBoard;
 
     String[] stdList = null;
@@ -53,6 +53,8 @@ public class ClassActivity extends Activity {
         txtTchName = (TextView) findViewById(R.id.txtTchName);
         txtStdCount = (TextView) findViewById(R.id.txtStdCount);
         btnDiemdanh = (Button) findViewById(R.id.btnDiemdanh);
+        btnBack = (Button) findViewById(R.id.btnBack);
+
         tablayoutDashBoard = (TabLayout) findViewById(R.id.tablayoutDashBoard);
 
         classCode = getIntent().getStringExtra("CLASS_CODE");
@@ -89,6 +91,12 @@ public class ClassActivity extends Activity {
                     attendCre.putExtra("CLASS_CODE",classCode);
                     startActivity(attendCre);
                 }
+            }
+        });
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 
@@ -162,7 +170,7 @@ public class ClassActivity extends Activity {
 
         // Add enroll class student info
 
-        Map<String, Object> student_info = new HashMap<>();
+//        Map<String, Object> student_info = new HashMap<>();
 //        student_info.put("code","khoideptraitest");
 //        student_info.put("location","10.0001010,101.010923");
 
@@ -195,7 +203,7 @@ public class ClassActivity extends Activity {
         sessionDataTch.put("inactive", true);
         sessionDataTch.put("location", "10.1231451,102.32342621");
 
-        db.collection("enroll").document(classCode).collection("teacher").document("0")
+        db.collection("enroll").document(classCode).collection("tch").document("0")
                 .set(sessionDataTch)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

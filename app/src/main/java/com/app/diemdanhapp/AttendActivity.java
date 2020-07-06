@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.app.model.userInfo;
+import com.app.service.checkAttendData;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -29,12 +30,16 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.SetOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +47,6 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AttendActivity extends AppCompatActivity
@@ -51,9 +55,25 @@ public class AttendActivity extends AppCompatActivity
 
     FirebaseFirestore db;
 
+    boolean showCurGps = true;
+
+    int status = 0;
+    int NOT_OPEN = 0,
+            OPENING = 1,
+            SUMMIT = 2,
+            CONFIRMED = 3;
+    int statusCode = 0;
+    int IS_GET = 1,
+            NOT_GET = 0;
+
     String classCode;
     String[] arrStd;
     Map<String, String> mapStdAttendInfo;
+
+    Long session = null;
+
+    String strCode = null, strLocation = null;
+    String strTchCode = null, strTchLocation = null;
 
     private Location location;
     private TextView txtLocation, txtCode, txtSession;
@@ -78,7 +98,7 @@ public class AttendActivity extends AppCompatActivity
         txtLocation = findViewById(R.id.txtlocal);
         txtCode = findViewById(R.id.txtCode);
         txtSession = findViewById(R.id.txtStatus);
-        btnBack = findViewById(R.id.btnBack);
+        btnBack = findViewById(R.id.buttonTop);
         btnAction = findViewById(R.id.btnAction);
 
         classCode = getIntent().getStringExtra("CLASS_CODE");
@@ -101,29 +121,30 @@ public class AttendActivity extends AppCompatActivity
                 finish();
             }
         });
+        btnAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Toast.makeText(AttendActivity.this, "Send data" + status + "-" + statusCode +"-" + strLocation + "-"+ strCode, Toast.LENGTH_SHORT).show();
+                if (status == SUMMIT) {
+                    if (statusCode == IS_GET) {
+                        if (strLocation != null && strCode != null) {
+                            if (compareAttend()) {
+                                summitAttend(strLocation, strCode,session);
+                            }
+                        }
+                    } else if (statusCode == NOT_GET) {
+                        getScanQR();
+//                        Toast.makeText(AttendActivity.this, "Chưa lấy mã QR", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
 
     }
 
     public void checkAttend(final String classCode) {
+        btnAction.setText("CHECKING");
         db = FirebaseFirestore.getInstance();
-//        final DocumentReference docRef = db.collection("enroll").document(classCode);
-//        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    DocumentSnapshot document = task.getResult();
-//                    if (document.exists()) {
-//                        Log.d("CRE", "check class attend: " + document.getData());
-//
-//                    } else {
-//                        Log.d("CRE", "Khong tim thay data " + classCode);
-//
-//                    }
-//                } else {
-//                    Log.d("CRE", "get failed with ", task.getException());
-//                }
-//            }
-//        });
         final DocumentReference docRef2 = db.collection("enroll").document(classCode);
         docRef2.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -136,15 +157,17 @@ public class AttendActivity extends AppCompatActivity
                 // Kiem tra lop diem danh da duoc tao hay chua
                 if (snapshot != null && snapshot.exists()) {
 //                    int session = Integer.parseInt((String)snapshot.getData().get("session"));
-                    Long session = (Long) snapshot.getData().get("session");
+                    session = (Long) snapshot.getData().get("session");
                     Log.d("FIRE", "Current data: " + "session " + session);
                     if (session == 0) {
                         txtSession.setText("");
                         btnAction.setText("Not Open");
+                        status = NOT_OPEN;
                     } else if (session != 0) {
                         txtSession.setText("Buổi " + session);
-//                        getScanQR();
+                        getTeacherCodeAndLocation(session);
                         getAttendResult(session);
+                        status = OPENING;
                     }
                 } else {
                     Log.d("FIRE", "Current data: null");
@@ -170,17 +193,20 @@ public class AttendActivity extends AppCompatActivity
                         // Neu da diem danh thanh cong
                         if (Arrays.asList(arrStd).contains(userInfo.getCode())) {
                             btnAction.setText("Confirmed !");
-
+                            status = CONFIRMED;
+                            showCurGps = false;
                             // lay chi chi tiet diem danh
                             try {
-                            mapStdAttendInfo = ((HashMap<String, Map>) document.getData().get("std_attent")).get(userInfo.getCode());
+                                mapStdAttendInfo = ((HashMap<String, Map>) document.getData().get("std_attend")).get(userInfo.getCode());
                                 Log.d("FIRE", "get attend info " + mapStdAttendInfo.get("code"));
                                 txtCode.setText(mapStdAttendInfo.get("code"));
                                 txtLocation.setText("gps : " + mapStdAttendInfo.get("location"));
-                            }catch (Exception e){};
+                            } catch (Exception e) {
+                            }
+                            ;
                         } else {
+
                             // Chua diem danh
-                            btnAction.setText("Submit");
                             getScanQR();
                         }
                     } else {
@@ -192,6 +218,83 @@ public class AttendActivity extends AppCompatActivity
                 }
             }
         });
+    }
+
+    public void summitAttend(final String location, final String code , Long session) {
+        Log.d("CRE", "gui du lieu diem danh");
+        db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> student_info = new HashMap<>();
+        student_info.put("code", code);
+        student_info.put("location", location);
+
+        Map<String, Object> std_attend = new HashMap<>();
+        std_attend.put(userInfo.getCode(), student_info);
+
+        final Map<String, Object> sessionDataStd = new HashMap<>();
+        sessionDataStd.put("std_attend", std_attend);
+
+        db.collection("enroll").document(classCode).collection("std").document(session+"")
+                .set(sessionDataStd, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("CRE", classCode + " Ghi thanh cong : " + location + "-" + code);
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("CRE", "Ghi khong thanh cong ", e);
+                    }
+                });
+        db.collection("enroll").document(classCode).collection("std").document(session+"")
+                .update("student",FieldValue.arrayUnion(userInfo.getCode()))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("CRE", classCode + " Ghi thanh cong diem danh : " + userInfo.getCode());
+                        status = CONFIRMED;
+                        btnAction.setText("CONFIRMED");
+                        showCurGps = false;
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("CRE", "Ghi khong thanh cong ", e);
+                    }
+                });
+    }
+
+    public void getTeacherCodeAndLocation(Long session) {
+        db.collection("enroll").document(classCode).collection("tch").document(session + "")
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    strTchCode = (String) document.getData().get("code");
+                    strTchLocation = (String) document.getData().get("location"); // need to refactor
+                    Log.d("FIRE", "get teacher location and code " + strTchCode + "-" + strTchLocation);
+                } else {
+
+                    Log.d("FIRE", "Current data: null");
+                    btnAction.setText("Not Open");
+                }
+            }
+        });
+    }
+
+    public boolean compareAttend() {
+        checkAttendData check = new checkAttendData(strCode, strLocation, strTchCode, strTchLocation);
+        if (check.check()) {
+            return true;
+        }
+        return false;
     }
 
     public void getLocation() {
@@ -249,11 +352,18 @@ public class AttendActivity extends AppCompatActivity
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
                 String contents = data.getStringExtra("SCAN_RESULT");
+                strCode = contents;
                 txtCode.setText("Code : " + contents);
+                btnAction.setText("Submit");
+                status = SUMMIT;
+                statusCode = IS_GET;
             }
             if (resultCode == RESULT_CANCELED) {
 //                Toast.makeText(AttendActivity.this, "Quét mã QR không thành công", Toast.LENGTH_LONG).show();
                 txtCode.setText("Code : " + "Quét mã QR không thành công");
+                status = SUMMIT;
+                statusCode = NOT_GET;
+                btnAction.setText("GET CODE");
             }
         }
     }
@@ -336,7 +446,8 @@ public class AttendActivity extends AppCompatActivity
         // Permissions ok, we get last location
         location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
-        if (location != null) {
+        if (location != null && showCurGps) {
+            strLocation = location.getLatitude() + "," + location.getLongitude();
             txtLocation.setText("Gps : " + location.getLatitude() + "," + location.getLongitude());
         }
 
@@ -369,7 +480,8 @@ public class AttendActivity extends AppCompatActivity
 
     @Override
     public void onLocationChanged(Location location) {
-        if (location != null) {
+        if (location != null && showCurGps) {
+            strLocation = location.getLatitude() + "," + location.getLongitude();
             txtLocation.setText("Gps : " + location.getLatitude() + "," + location.getLongitude());
         }
     }

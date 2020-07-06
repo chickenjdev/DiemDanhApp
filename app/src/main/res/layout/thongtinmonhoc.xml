@@ -35,11 +35,11 @@
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/buttonTop"
+            app:layout_constraintStart_toEndOf="@+id/btnBack"
             app:layout_constraintTop_toTopOf="@+id/topView" />
 
         <Button
-            android:id="@+id/buttonTop"
+            android:id="@+id/btnBack"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="50dp"
             android:layout_height="50dp"

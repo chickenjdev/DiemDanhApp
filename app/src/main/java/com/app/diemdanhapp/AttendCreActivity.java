@@ -5,10 +5,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Handler;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -22,9 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.DialogFragment;
 
-import com.app.model.userInfo;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,19 +30,20 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AttendCreActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
-
 
 
     FirebaseFirestore db;
@@ -53,8 +52,20 @@ public class AttendCreActivity extends AppCompatActivity
     String gps;
     boolean showCurGps = true;
 
+    String strCode = null;
+    String strLocation = null;
+
+    Long curSession;
+
+    int status = 0;
+    int START = 0,
+            OPENING = 1,
+            END = 2;
+
+    String strTchCode, strTchLocation;
+
     private Location location;
-    private TextView txtLocation, txtCode, txtSession;
+    private TextView txtLocation, txtCode, txtSession, txtNotify;
     private Button btnBack, btnAction;
     private GoogleApiClient googleApiClient;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -76,7 +87,8 @@ public class AttendCreActivity extends AppCompatActivity
         txtLocation = findViewById(R.id.txtlocal);
         txtCode = findViewById(R.id.txtCode);
         txtSession = findViewById(R.id.txtStatus);
-        btnBack = findViewById(R.id.btnBack);
+        txtNotify = findViewById(R.id.txtNotify);
+        btnBack = findViewById(R.id.buttonTop);
         btnAction = findViewById(R.id.btnAction);
 
         //add permissions , request location of the users
@@ -98,14 +110,37 @@ public class AttendCreActivity extends AppCompatActivity
             }
         });
 
+        btnAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (status == START) {
+                    if (strCode != null && !strCode.equals("") && strLocation != null && !strLocation.equals("")) {
+//                    Toast.makeText(AttendCreActivity.this, "Create attend", Toast.LENGTH_SHORT).show();
+                        createEnrollSession(curSession,strCode,strLocation);
+                    }
+                } else if (status == OPENING) {
+                    endSession(curSession);
+                }
+            }
+        });
+
+        txtCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentQr = new Intent(AttendCreActivity.this,QRCodeActivity.class);
+                intentQr.putExtra("QR_CODE",strCode);
+                startActivity(intentQr);
+            }
+        });
+
     }
 
-    public void getInputCode(){
+    public void getInputCode() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Nhập code điểm danh ");
 
         final EditText input = new EditText(this);
-        input.setPadding(20,10,10,20);
+        input.setPadding(20, 10, 10, 20);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
@@ -113,6 +148,7 @@ public class AttendCreActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 txtCode.setText("Code: " + input.getText());
+                strCode = input.getText().toString();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -128,50 +164,34 @@ public class AttendCreActivity extends AppCompatActivity
 
     public void checkAttend(final String classCode) {
         db = FirebaseFirestore.getInstance();
-//        final DocumentReference docRef = db.collection("enroll").document(classCode);
-//        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    DocumentSnapshot document = task.getResult();
-//                    if (document.exists()) {
-//                        Log.d("CRE", "check class attend: " + document.getData());
-//
-//                    } else {
-//                        Log.d("CRE", "Khong tim thay data " + classCode);
-//
-//                    }
-//                } else {
-//                    Log.d("CRE", "get failed with ", task.getException());
-//                }
-//            }
-//        });
         db.collection("enroll").document(classCode)
-        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                 // Kiem tra lop diem danh da duoc tao hay chua
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    Long session = (Long) document.getData().get("session");
+                    curSession = (Long) document.getData().get("session");
                     Long sessionCount = (Long) document.getData().get("sessionCount");
-                    Log.d("FIRE", "Current data: " + "session " + session);
-                    if (session == 0) {
-//                        getLocation();
-                        txtSession.setText("Buổi "+ (sessionCount+1));
+                    Log.d("FIRE", "Current data: " + "session " + curSession);
+                    // Tao lop diem danh moi
+                    if (curSession == 0) {
+                        curSession = sessionCount + 1;
+                        status = START;
+                        txtSession.setText("Buổi " + curSession);
                         btnAction.setText("Start ! ");
                         getInputCode();
-
-                    } else if (session != 0) {
-                        txtSession.setText("Buổi " + session);
+                        // Lop diem danh hien tai dang mo
+                    } else if (curSession != 0) {
+                        status = OPENING;
+                        btnAction.setText("\nIN PROCESS \n... ");
+                        txtNotify.setText("Đang mở điểm danh !!!");
+                        txtSession.setText(" Buổi " + curSession);
                         showCurGps = false;
-                        txtLocation.setText("get location on database");
-//                        getScanQR();
-//                        getAttendResult(session);
+                        getAttendResult(curSession);
                     }
                 } else {
-//                    getLocation();
                     Log.d("FIRE", "Current data: null");
                     btnAction.setText("Not Open");
                 }
@@ -179,8 +199,135 @@ public class AttendCreActivity extends AppCompatActivity
         });
     }
 
+    public void getAttendResult(Long session) {
+        db.collection("enroll").document(classCode).collection("tch").document(session + "")
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    strTchCode = (String) document.getData().get("code");
+                    strTchLocation = (String) document.getData().get("location");
+                    strCode = strTchCode;
+                    Log.d("FIRE", "get teacher location and code " + strTchCode + "-" + strTchLocation);
+                    txtLocation.setText("gps : " + strTchLocation);
+                    txtCode.setText("code : " + strTchCode);
+                } else {
+
+                    Log.d("FIRE", "Current data: null");
+                    btnAction.setText("Not Open");
+                }
+            }
+        });
+    }
+
+    public void endSession(final Long session) {
+        db.collection("enroll").document(classCode)
+                .update("session", 0).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("FIRE", "successfully updated! end Session " + session);
+                btnAction.setText("CLOSED !!!");
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                }, 2000);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("FIRE", "Error updating document", e);
+            }
+        });
+        db.collection("enroll").document(classCode)
+                .update("sessionCount", session).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("FIRE", "successfully updated! end Session " + session);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("FIRE", "Error updating document", e);
+            }
+        });
+    }
+
+    public void createEnrollSession(final Long session,String code,String location) {
+        db = FirebaseFirestore.getInstance();
+
+        // Add enroll class student info
+
+//        Map<String, Object> student_info = new HashMap<>();
+//        student_info.put("code","khoideptraitest");
+//        student_info.put("location","10.0001010,101.010923");
+
+        Map<String, Object> std_attend = new HashMap<>();
+//        std_attend.put("17520650",student_info);
+
+        final Map<String, Object> sessionDataStd = new HashMap<>();
+        sessionDataStd.put("std_attend", std_attend);
+        sessionDataStd.put("student", new ArrayList<>());
+
+        db.collection("enroll").document(classCode).collection("std").document(session + "")
+                .set(sessionDataStd)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("CRE", classCode + " Enroll Class successfully written! Session : " + session);
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("CRE", "Khong the tao diem danh Session : " + session, e);
+                    }
+                });
+
+        final Map<String, Object> sessionDataTch = new HashMap<>();
+        sessionDataTch.put("code", code);
+        sessionDataTch.put("day", "05/07/2020");
+        sessionDataTch.put("location", location);
+
+        db.collection("enroll").document(classCode).collection("tch").document(session + "")
+                .set(sessionDataTch)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("CRE", classCode + " Enroll Class successfully written!");
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("CRE", "Error writing document", e);
+                    }
+                });
+
+        db.collection("enroll").document(classCode)
+                .update("session", session).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("FIRE", "successfully updated! end Session " + session);
+                btnAction.setText("\nIN PROCESS \n...");
+                status = OPENING;
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("FIRE", "Error updating document", e);
+            }
+        });
+    }
+
     public void getLocation() {
-        btnAction.setText("Start !!!! ");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (permissionsToRequest.size() > 0) {
                 requestPermissions(permissionsToRequest.toArray(
@@ -274,8 +421,9 @@ public class AttendCreActivity extends AppCompatActivity
         location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
         if (location != null && showCurGps) {
-            txtLocation.setText("Latitude : " + location.getLatitude() + "\nLongitude : " + location.getLongitude());
-            Log.d("CRE","Latitude : " + location.getLatitude() + "Longitude : " + location.getLongitude());
+            txtLocation.setText("gps : " + location.getLatitude() + "," + location.getLongitude());
+//            Log.d("CRE","Latitude : " + location.getLatitude() + "Longitude : " + location.getLongitude());
+            strLocation = location.getLatitude() + "," + location.getLongitude();
         }
 
         startLocationUpdates();
@@ -308,8 +456,9 @@ public class AttendCreActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
         if (location != null && showCurGps) {
-            txtLocation.setText("Latitude : " + location.getLatitude() + "\nLongitude : " + location.getLongitude());
-            Log.d("CRE","Latitude : " + location.getLatitude() + "Longitude : " + location.getLongitude());
+            strLocation = location.getLatitude() + "," + location.getLongitude();
+            txtLocation.setText("gps : " + location.getLatitude() + "," + location.getLongitude());
+//            Log.d("CRE","Latitude : " + location.getLatitude() + "Longitude : " + location.getLongitude());
         }
     }
 

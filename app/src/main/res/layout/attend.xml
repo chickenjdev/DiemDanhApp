@@ -23,6 +23,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/txtNotify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:textColor="#FF4800"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/txtStatus"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
         android:id="@+id/txtStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,15 +62,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
+        android:maxLength="30"
         android:text="Code"
         android:textColor="#F4F0F0"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/btnBack"
+        app:layout_constraintBottom_toTopOf="@+id/buttonTop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btnBack"
+        android:id="@+id/buttonTop"
         android:layout_width="151dp"
         android:layout_height="54dp"
         android:layout_marginBottom="60dp"
