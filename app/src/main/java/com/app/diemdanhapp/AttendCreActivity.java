@@ -82,7 +82,7 @@ public class AttendCreActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.attend);
+        setContentView(R.layout.attend_cre);
 
         txtLocation = findViewById(R.id.txtlocal);
         txtCode = findViewById(R.id.txtCode);

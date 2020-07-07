@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -112,8 +113,6 @@ public class AttendActivity extends AppCompatActivity
         getLocation();
         checkAttend(classCode);
 
-//        getLocation();
-//        getScanQR();
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,12 +126,23 @@ public class AttendActivity extends AppCompatActivity
 //                Toast.makeText(AttendActivity.this, "Send data" + status + "-" + statusCode +"-" + strLocation + "-"+ strCode, Toast.LENGTH_SHORT).show();
                 if (status == SUMMIT) {
                     if (statusCode == IS_GET) {
-                        if (strLocation != null && strCode != null) {
+                        if (strLocation != null && !strLocation.equals("") && strCode != null && !strCode.equals("")) {
                             if (compareAttend()) {
+                                btnAction.setText("\nSUBMIT \n...");
                                 summitAttend(strLocation, strCode,session);
+                            }else {
+                                btnAction.setText("FAILED");
+                                Toast.makeText(AttendActivity.this,"Code hoặc Location không trùng khớp",Toast.LENGTH_LONG).show();
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        finish();
+                                    }
+                                }, 2000);
                             }
                         }
-                    } else if (statusCode == NOT_GET) {
+                    } else if (statusCode == NOT_GET && userInfo.getType().equals("std")) {
                         getScanQR();
 //                        Toast.makeText(AttendActivity.this, "Chưa lấy mã QR", Toast.LENGTH_SHORT).show();
                     }
@@ -205,9 +215,10 @@ public class AttendActivity extends AppCompatActivity
                             }
                             ;
                         } else {
-
+                            if(userInfo.getType().equals("std")){
                             // Chua diem danh
                             getScanQR();
+                            }
                         }
                     } else {
                         btnAction.setText("Not Open");
@@ -281,7 +292,6 @@ public class AttendActivity extends AppCompatActivity
                     strTchLocation = (String) document.getData().get("location"); // need to refactor
                     Log.d("FIRE", "get teacher location and code " + strTchCode + "-" + strTchLocation);
                 } else {
-
                     Log.d("FIRE", "Current data: null");
                     btnAction.setText("Not Open");
                 }

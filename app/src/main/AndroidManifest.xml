@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.app.diemdanhapp">
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <uses-feature android:name="android.hardware.location.gps" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@drawable/logou1"
+        android:label="UIT Log"
+        android:roundIcon="@drawable/logou1"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name="com.app.diemdanhapp.LoginActivity"
-            android:label="LoginActivity">
+            android:label="UIT Log">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,6 +43,7 @@
             android:name="com.app.diemdanhapp.DashboardActivity"
 
             android:label="DashboardActivity">
+
         </activity>
         <activity
             android:name="com.app.diemdanhapp.AttendActivity"
@@ -58,6 +61,18 @@
             android:name="com.app.diemdanhapp.QRCodeActivity"
 
             android:label="QRCodeActivity">
+
+        </activity>
+        <activity
+            android:name="com.app.diemdanhapp.StudentListActivity"
+
+            android:label="StudentListActivity">
+
+        </activity>
+        <activity
+            android:name="com.app.diemdanhapp.SessionListActivity"
+
+            android:label="SessionListActivity">
 
         </activity>
 

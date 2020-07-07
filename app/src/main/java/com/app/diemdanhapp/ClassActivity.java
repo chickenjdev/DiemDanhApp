@@ -9,7 +9,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.app.model.Student;
+import com.app.model.getStudentList;
 import com.app.model.userInfo;
 import com.app.service.gpsService;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,14 +24,18 @@ import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -35,15 +43,25 @@ public class ClassActivity extends Activity {
 
     FirebaseFirestore db;
     TextView txtSubCode, txtTittle, txtSubName, txtSubTime, txtTchName, txtStdCount;
-    Button btnDiemdanh, btnBack;
+    Button btnDiemdanh, btnBack, btnDetail;
     TabLayout tablayoutDashBoard;
 
     String[] stdList = null;
     String classCode;
 
+    ConstraintLayout txtStudentList;
+
+    getStudentList getStdInfo;
+
+    static List<Student> stdListOfClass;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        classCode = getIntent().getStringExtra("CLASS_CODE");
+        Object classInfo = (Object) getIntent().getSerializableExtra("CLASS_INFO");
+
         setContentView(R.layout.thongtinmonhoc);
 
         txtSubCode = (TextView) findViewById(R.id.txtSubCode);
@@ -54,11 +72,11 @@ public class ClassActivity extends Activity {
         txtStdCount = (TextView) findViewById(R.id.txtStdCount);
         btnDiemdanh = (Button) findViewById(R.id.btnDiemdanh);
         btnBack = (Button) findViewById(R.id.btnBack);
+        btnDetail = findViewById(R.id.btnDetail);
 
         tablayoutDashBoard = (TabLayout) findViewById(R.id.tablayoutDashBoard);
+        txtStudentList = findViewById(R.id.txtStudentList);
 
-        classCode = getIntent().getStringExtra("CLASS_CODE");
-        Object classInfo = (Object) getIntent().getSerializableExtra("CLASS_INFO");
 
         txtSubCode.setText(classCode);
         txtSubName.setText(((String[]) classInfo)[1]);
@@ -68,14 +86,21 @@ public class ClassActivity extends Activity {
 
         // If teacher
         if (userInfo.getType().equals("teacher")) {
-            //get student list
-            stdList = getStudentList((((String[]) classInfo)[3]));
 
-            txtStdCount.setText("Số lượng: " + stdList.length);
+            getStdInfo = new getStudentList(classCode, stdList);
+            getStdInfo.getSessionCount(classCode);
+
+            getStudentArr(classCode);
+
+
 
             checkClass(classCode);
 
-        } else {
+        } else if (userInfo.getType().equals("std")) {
+            new getStudentList(classCode, stdList).getAttendSessionList(userInfo.getCode());
+            getStudentList getSessionInfo = new getStudentList(classCode, stdList);
+            getSessionInfo.getAttendSessionList(userInfo.getCode());
+            getSessionInfo.getSessionCount(classCode);
             txtStdCount.setText("Danh sách điểm danh ");
         }
 
@@ -84,11 +109,11 @@ public class ClassActivity extends Activity {
             public void onClick(View v) {
                 if (userInfo.getType().equals("std")) {
                     Intent attend = new Intent(ClassActivity.this, AttendActivity.class);
-                    attend.putExtra("CLASS_CODE",classCode);
+                    attend.putExtra("CLASS_CODE", classCode);
                     startActivity(attend);
-                }else {
+                } else if (userInfo.getType().equals("teacher")) {
                     Intent attendCre = new Intent(ClassActivity.this, AttendCreActivity.class);
-                    attendCre.putExtra("CLASS_CODE",classCode);
+                    attendCre.putExtra("CLASS_CODE", classCode);
                     startActivity(attendCre);
                 }
             }
@@ -100,6 +125,32 @@ public class ClassActivity extends Activity {
             }
         });
 
+        txtStudentList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (userInfo.getType().equals("std") && getStudentList.listStdSession != null) {
+                    Log.d("CRE", String.valueOf(getStudentList.listStdSession));
+                } else if (userInfo.getType().equals("teacher") && getStudentList.listStdForTeacher != null) {
+//                    Log.d("FIRE","Lop co "+getStudentList.listStdForTeacher.size() + " sinh vien" + getStudentList.listStdForTeacher.toString());
+                    Intent intent = new Intent(ClassActivity.this, StudentListActivity.class);
+                    intent.putExtra("CLASS_CODE", classCode);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        btnDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (userInfo.getType().equals("std") && getStudentList.listStdSession != null) {
+                    Log.d("CRE", String.valueOf(getStudentList.listStdSession));
+                } else if (userInfo.getType().equals("teacher") && getStudentList.listStdForTeacher != null) {
+                    Intent intent = new Intent(ClassActivity.this, SessionListActivity.class);
+                    intent.putExtra("CLASS_CODE", classCode);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     public String[] getStudentList(String str) {
@@ -220,4 +271,35 @@ public class ClassActivity extends Activity {
                 });
 
     }
+
+
+    public void getStudentArr(final String classCode) {
+        db = FirebaseFirestore.getInstance();
+        final DocumentReference docRef = db.collection("class").document(classCode);
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("FIRE", "Listen failed.", e);
+                    return;
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    Object obj = snapshot.getData().get("student");
+                    Log.d("FIRE", "Current data: " + snapshot.getData().get("student"));
+
+                    String[] stdList = getStudentList(obj.toString());
+                    txtStdCount.setText("Số lượng sinh viên : " + stdList.length);
+
+                    getStdInfo = new getStudentList(classCode, stdList);
+                    getStdInfo.getListStudentData();
+
+                } else {
+                    Log.d("FIRE", "Current data: null");
+                }
+            }
+        });
+    }
+
 }
