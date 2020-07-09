@@ -237,7 +237,7 @@ public class DashboardActivity extends AppCompatActivity implements BottomNaviga
 
                                 String[] obj = {document.getId()
                                         , (String) document.getData().get("sub_name")
-                                        , time,(String) document.getData().get("teacher")};
+                                        , time,(String) document.getData().get("teacher"),(String) document.getData().get("teacher")};
                                 if(document.getData().get("student").toString().contains(userInfo.getCode())){
                                     Intent classActivity = new Intent(DashboardActivity.this, ClassActivity.class);
                                     classActivity.putExtra("CLASS_CODE", classCode);
