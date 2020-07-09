@@ -322,6 +322,7 @@ public class AttendActivity extends AppCompatActivity
 
     public boolean compareAttend() {
         checkAttendData check = new checkAttendData(strCode, strLocation, strTchCode, strTchLocation);
+//        check.checkLocation2();
         if (check.check()) {
             return true;
         }
