@@ -57,7 +57,7 @@ public class CustomListAdapter  extends BaseAdapter {
         Student student = this.listData.get(position);
         holder.stdNameView.setText(student.getName());
         holder.stdCode.setText(student.getStdCode());
-        holder.attendCount.setText("Chuyên cần : "+student.getAttendCount() +"/"+ getStudentList.sessionCount);
+        holder.attendCount.setText("Chuyên cần : "+student.getAttendCount() +"/"+ (getStudentList.sessionCount-1));
 
         return convertView;
     }

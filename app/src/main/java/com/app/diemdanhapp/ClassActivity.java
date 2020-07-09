@@ -358,4 +358,11 @@ public class ClassActivity extends Activity implements BottomNavigationView.OnNa
         }
         return true;
     }
+    @Override
+    public void onResume()
+    {  // After a pause OR at startup
+        super.onResume();
+        //Refresh your stuff here
+        getStudentArr(classCode);
+    }
 }

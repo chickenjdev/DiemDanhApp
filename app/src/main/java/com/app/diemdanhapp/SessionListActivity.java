@@ -62,7 +62,7 @@ public class SessionListActivity extends Activity {
 
 
         tablayoutDashBoard.getTabAt(0).setText(classCode);
-        String [] sessionArr = new String[getStudentList.sessionCount];
+        String [] sessionArr = new String[getStudentList.sessionCount-1];
         for (int i = 0 ; i< sessionArr.length; i++){
             sessionArr[i]= "Buổi "+(i+1);
         }

@@ -513,4 +513,10 @@ public class AttendCreActivity extends AppCompatActivity
                 break;
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

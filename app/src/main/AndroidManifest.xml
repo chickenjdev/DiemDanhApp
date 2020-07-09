@@ -13,10 +13,10 @@
         android:label="UIT Log"
         android:roundIcon="@drawable/logou1"
         android:supportsRtl="true"
+
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.app.diemdanhapp.LoginActivity"
-            android:label="UIT Log">
+            android:name="com.app.diemdanhapp.LoginActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,29 +36,33 @@
         </activity>
         <activity
             android:name="com.app.diemdanhapp.ClassActivity"
+            android:configChanges="orientation|screenSize"
             android:label="ClassActivity">
 
         </activity>
         <activity
             android:name="com.app.diemdanhapp.DashboardActivity"
+            android:configChanges="orientation|screenSize"
 
             android:label="DashboardActivity">
 
         </activity>
         <activity
             android:name="com.app.diemdanhapp.AttendActivity"
-
+            android:configChanges="orientation|screenSize"
             android:label="AttendActivity">
 
         </activity>
         <activity
             android:name="com.app.diemdanhapp.AttendCreActivity"
+            android:configChanges="orientation|screenSize"
 
             android:label="AttendCreActivity">
 
         </activity>
         <activity
             android:name="com.app.diemdanhapp.QRCodeActivity"
+            android:configChanges="orientation|screenSize"
 
             android:label="QRCodeActivity">
 

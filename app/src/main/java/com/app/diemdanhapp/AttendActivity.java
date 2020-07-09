@@ -68,6 +68,8 @@ public class AttendActivity extends AppCompatActivity
     int IS_GET = 1,
             NOT_GET = 0;
 
+    boolean recheck = true;
+
     String classCode;
     String[] arrStd;
     Map<String, String> mapStdAttendInfo;
@@ -112,12 +114,15 @@ public class AttendActivity extends AppCompatActivity
         permissionsToRequest = permissionsToRequest(permissions);
 
         getLocation();
-        checkAttend(classCode);
+        if (recheck) {
+            checkAttend(classCode);
+        }
 
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                recheck = false;
                 finish();
             }
         });
@@ -130,10 +135,10 @@ public class AttendActivity extends AppCompatActivity
                         if (strLocation != null && !strLocation.equals("") && strCode != null && !strCode.equals("")) {
                             if (compareAttend()) {
                                 btnAction.setText("\nSUBMIT \n...");
-                                summitAttend(strLocation, strCode,session);
-                            }else {
+                                summitAttend(strLocation, strCode, session);
+                            } else {
                                 btnAction.setText("FAILED");
-                                Toast.makeText(AttendActivity.this,"Code hoặc Location không trùng khớp",Toast.LENGTH_LONG).show();
+                                Toast.makeText(AttendActivity.this, "Code hoặc Location không trùng khớp", Toast.LENGTH_LONG).show();
                                 Handler handler = new Handler();
                                 handler.postDelayed(new Runnable() {
                                     @Override
@@ -142,13 +147,15 @@ public class AttendActivity extends AppCompatActivity
                                     }
                                 }, 2000);
                             }
-                        }else if(strLocation == null){
-                            Toast.makeText(AttendActivity.this,"Bạn cần kiểm tra lại GPS để tiếp tục",Toast.LENGTH_LONG).show();
+                        } else if (strLocation == null) {
+                            Toast.makeText(AttendActivity.this, "Bạn cần kiểm tra lại GPS để tiếp tục", Toast.LENGTH_LONG).show();
                             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                             startActivity(intent);
                         }
                     } else if (statusCode == NOT_GET && userInfo.getType().equals("std")) {
                         getScanQR();
+                        Log.d("DEBUG", "At Chua get code line 152 ");
+
 //                        Toast.makeText(AttendActivity.this, "Chưa lấy mã QR", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -158,41 +165,49 @@ public class AttendActivity extends AppCompatActivity
     }
 
     public void checkAttend(final String classCode) {
+        Log.d("DEBUG", "At check diem danh line 168 ");
+
         btnAction.setText("CHECKING");
-        db = FirebaseFirestore.getInstance();
-        final DocumentReference docRef2 = db.collection("enroll").document(classCode);
-        docRef2.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w("FIRE", "Listen failed.", e);
-                    return;
-                }
-                // Kiem tra lop diem danh da duoc tao hay chua
-                if (snapshot != null && snapshot.exists()) {
+        if(recheck){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("enroll").document(classCode)
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w("FIRE", "Listen failed.", e);
+                            return;
+                        }
+                        // Kiem tra lop diem danh da duoc tao hay chua
+                        if (snapshot != null && snapshot.exists() && recheck) {
 //                    int session = Integer.parseInt((String)snapshot.getData().get("session"));
-                    session = (Long) snapshot.getData().get("session");
-                    Log.d("FIRE", "Current data: " + "session " + session);
-                    if (session == 0) {
-                        txtSession.setText("");
-                        btnAction.setText("Not Open");
-                        status = NOT_OPEN;
-                    } else if (session != 0) {
-                        txtSession.setText("Buổi " + session);
-                        getTeacherCodeAndLocation(session);
-                        getAttendResult(session);
-                        status = OPENING;
+                            session = (Long) snapshot.getData().get("session");
+                            Log.d("FIRE", "Current data: " + "session " + session);
+                            if (session == 0) {
+                                txtSession.setText("");
+                                btnAction.setText("Not Open");
+                                status = NOT_OPEN;
+                            } else if (session != 0) {
+                                txtSession.setText("Buổi " + session);
+                                getTeacherCodeAndLocation(session);
+                                getAttendResult(session);
+                                status = OPENING;
+                            }
+                        } else {
+                            Log.d("FIRE", "Current data: null");
+                            btnAction.setText("Not Open");
+                        }
                     }
-                } else {
-                    Log.d("FIRE", "Current data: null");
-                    btnAction.setText("Not Open");
-                }
-            }
-        });
+                });
+
+        }
     }
 
     public void getAttendResult(Long session) {
+        Log.d("DEBUG", "At check diem danh line 200 ");
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("enroll").document(classCode).collection("std").document(session + "")
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -210,6 +225,7 @@ public class AttendActivity extends AppCompatActivity
                             btnAction.setText("Confirmed !");
                             status = CONFIRMED;
                             showCurGps = false;
+                            recheck = false;
                             // lay chi chi tiet diem danh
                             try {
                                 mapStdAttendInfo = ((HashMap<String, Map>) document.getData().get("std_attend")).get(userInfo.getCode());
@@ -218,13 +234,12 @@ public class AttendActivity extends AppCompatActivity
                                 txtLocation.setText("gps : " + mapStdAttendInfo.get("location"));
                             } catch (Exception e) {
                             }
-                            ;
-                        } else {
-                            if(userInfo.getType().equals("std")){
+                        } else if (userInfo.getType().equals("std") && recheck) {
                             // Chua diem danh
                             getScanQR();
-                            }
+                            Log.d("DEBUG", "At Chua diem danh line 226 ");
                         }
+
                     } else {
                         btnAction.setText("Not Open");
                         Log.d("FIRE", "Khong tim thay data " + classCode);
@@ -236,9 +251,9 @@ public class AttendActivity extends AppCompatActivity
         });
     }
 
-    public void summitAttend(final String location, final String code , Long session) {
+    public void summitAttend(final String location, final String code, Long session) {
         Log.d("CRE", "gui du lieu diem danh");
-        db = FirebaseFirestore.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> student_info = new HashMap<>();
         student_info.put("code", code);
@@ -250,7 +265,7 @@ public class AttendActivity extends AppCompatActivity
         final Map<String, Object> sessionDataStd = new HashMap<>();
         sessionDataStd.put("std_attend", std_attend);
 
-        db.collection("enroll").document(classCode).collection("std").document(session+"")
+        db.collection("enroll").document(classCode).collection("std").document(session + "")
                 .set(sessionDataStd, SetOptions.merge())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -265,8 +280,8 @@ public class AttendActivity extends AppCompatActivity
                         Log.w("CRE", "Ghi khong thanh cong ", e);
                     }
                 });
-        db.collection("enroll").document(classCode).collection("std").document(session+"")
-                .update("student",FieldValue.arrayUnion(userInfo.getCode()))
+        db.collection("enroll").document(classCode).collection("std").document(session + "")
+                .update("student", FieldValue.arrayUnion(userInfo.getCode()))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -285,6 +300,7 @@ public class AttendActivity extends AppCompatActivity
     }
 
     public void getTeacherCodeAndLocation(Long session) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("enroll").document(classCode).collection("tch").document(session + "")
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -379,6 +395,7 @@ public class AttendActivity extends AppCompatActivity
                 status = SUMMIT;
                 statusCode = NOT_GET;
                 btnAction.setText("GET CODE");
+                recheck = false;
             }
         }
     }
@@ -555,5 +572,10 @@ public class AttendActivity extends AppCompatActivity
             }
         }
         return strArr;
+    }
+    @Override
+    public void onBackPressed() {
+        recheck = false;
+        finish();
     }
 }

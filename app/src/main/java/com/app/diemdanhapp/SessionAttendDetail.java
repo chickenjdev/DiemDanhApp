@@ -50,7 +50,9 @@ public class SessionAttendDetail extends Activity {
             sessionArr[i] = (i+1)+") "+sessionArr[i];
         }
         if(sessionArr.length==0){
-            Toast.makeText(SessionAttendDetail.this,"Không có học sinh điểm danh",Toast.LENGTH_LONG).show();
+            sessionArr = new String[1];
+            sessionArr[0] = "Không có sinh viên nào điểm danh";
+//            Toast.makeText(SessionAttendDetail.this,"Không có học sinh điểm danh",Toast.LENGTH_LONG).show();
         }
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.itemsimple, sessionArr);
         listSession.setAdapter(arrayAdapter);
