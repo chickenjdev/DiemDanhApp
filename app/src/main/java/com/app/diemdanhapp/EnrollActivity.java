@@ -55,7 +55,7 @@ public class EnrollActivity extends Activity {
         txtSubCode.setText(classCode);
         txtSubName.setText(((String[]) classInfo)[1]);
         txtSubTime.setText(((String[]) classInfo)[2]);
-        getTchName(((String[]) classInfo)[4]);
+        getTchName(((String[]) classInfo)[3]);
 
         tablayoutDashBoard.getTabAt(0).setText(classCode);
 
