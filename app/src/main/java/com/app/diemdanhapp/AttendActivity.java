@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -141,6 +142,10 @@ public class AttendActivity extends AppCompatActivity
                                     }
                                 }, 2000);
                             }
+                        }else if(strLocation == null){
+                            Toast.makeText(AttendActivity.this,"Bạn cần kiểm tra lại GPS để tiếp tục",Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(intent);
                         }
                     } else if (statusCode == NOT_GET && userInfo.getType().equals("std")) {
                         getScanQR();

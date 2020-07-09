@@ -1,5 +1,6 @@
 package com.app.model;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -8,7 +9,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.app.diemdanhapp.DashboardActivity;
+import com.app.diemdanhapp.LoadingActivity;
+import com.app.diemdanhapp.LoginActivity;
 import com.app.diemdanhapp.ProfileActivity;
+import com.app.diemdanhapp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,6 +49,9 @@ public class loginModel {
                 break;
             case 2 :
                 Toast.makeText(this.cont1,"Incorrect username or password",Toast.LENGTH_LONG).show();
+                Intent login = new Intent(cont1,LoginActivity.class);
+                login.putExtra("PRE_USER",txtUser.replace("@uit.edu.vn",""));
+                cont1.startActivity(login);
                 break;
         }
     }

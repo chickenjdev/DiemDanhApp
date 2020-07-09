@@ -52,7 +52,7 @@
             tools:ignore="MissingConstraints" />
 
         <Button
-            android:id="@+id/buttonTop2"
+            android:id="@+id/btnOption"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -297,7 +297,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/btnDiemdanh"
+        android:id="@+id/btnMolop"
         android:layout_width="211dp"
         android:layout_height="50dp"
         android:layout_marginBottom="40dp"

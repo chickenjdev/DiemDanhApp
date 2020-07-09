@@ -4,21 +4,15 @@
     <item
         android:id="@+id/nav_home"
         android:enabled="true"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/person_24"
-        android:title="@string/person" />
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/person"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/nav_score"
         android:enabled="true"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/score_24"
-        android:title="@string/score" />
-    <item
-        android:id="@+id/nav_tkb"
-        android:enabled="true"
-        android:icon="@drawable/time_24"
-        app:showAsAction="ifRoom"
-        android:title="@string/tkb" />
-    
+        android:icon="@drawable/person_24"
+        android:title="Profile"
+        app:showAsAction="ifRoom" />
+
 
 </menu>

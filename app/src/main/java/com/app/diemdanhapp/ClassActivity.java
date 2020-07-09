@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,12 +16,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.app.model.Student;
 import com.app.model.getStudentList;
 import com.app.model.userInfo;
-import com.app.service.gpsService;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.tabs.TabItem;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -31,15 +31,13 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
-public class ClassActivity extends Activity {
+public class ClassActivity extends Activity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
     FirebaseFirestore db;
     TextView txtSubCode, txtTittle, txtSubName, txtSubTime, txtTchName, txtStdCount;
@@ -70,7 +68,7 @@ public class ClassActivity extends Activity {
         txtSubTime = (TextView) findViewById(R.id.txtSubTime);
         txtTchName = (TextView) findViewById(R.id.txtTchName);
         txtStdCount = (TextView) findViewById(R.id.txtStdCount);
-        btnDiemdanh = (Button) findViewById(R.id.btnDiemdanh);
+        btnDiemdanh = (Button) findViewById(R.id.btnMolop);
         btnBack = (Button) findViewById(R.id.btnBack);
         btnDetail = findViewById(R.id.btnDetail);
 
@@ -84,15 +82,18 @@ public class ClassActivity extends Activity {
 
         tablayoutDashBoard.getTabAt(0).setText(classCode);
 
+        mBtmView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        mBtmView.setOnNavigationItemSelectedListener(this);
+        mBtmView.getMenu().findItem(R.id.nav_score).setChecked(false);
+        mBtmView.getMenu().findItem(R.id.nav_home).setChecked(false);
+
         // If teacher
         if (userInfo.getType().equals("teacher")) {
-
+            getTchName(userInfo.getCode());
             getStdInfo = new getStudentList(classCode, stdList);
             getStdInfo.getSessionCount(classCode);
 
             getStudentArr(classCode);
-
-
 
             checkClass(classCode);
 
@@ -102,6 +103,7 @@ public class ClassActivity extends Activity {
             getSessionInfo.getAttendSessionList(userInfo.getCode());
             getSessionInfo.getSessionCount(classCode);
             txtStdCount.setText("Danh sách điểm danh ");
+            getTchName(((String[]) classInfo)[4]);
         }
 
         btnDiemdanh.setOnClickListener(new View.OnClickListener() {
@@ -130,6 +132,10 @@ public class ClassActivity extends Activity {
             public void onClick(View v) {
                 if (userInfo.getType().equals("std") && getStudentList.listStdSession != null) {
                     Log.d("CRE", String.valueOf(getStudentList.listStdSession));
+                    Intent intent = new Intent(ClassActivity.this, AttendDetailActivity.class);
+                    intent.putExtra("CLASS_CODE", classCode);
+                    intent.putExtra("STD_CODE", userInfo.getCode());
+                    startActivity(intent);
                 } else if (userInfo.getType().equals("teacher") && getStudentList.listStdForTeacher != null) {
 //                    Log.d("FIRE","Lop co "+getStudentList.listStdForTeacher.size() + " sinh vien" + getStudentList.listStdForTeacher.toString());
                     Intent intent = new Intent(ClassActivity.this, StudentListActivity.class);
@@ -144,6 +150,10 @@ public class ClassActivity extends Activity {
             public void onClick(View v) {
                 if (userInfo.getType().equals("std") && getStudentList.listStdSession != null) {
                     Log.d("CRE", String.valueOf(getStudentList.listStdSession));
+                    Intent intent = new Intent(ClassActivity.this, AttendDetailActivity.class);
+                    intent.putExtra("CLASS_CODE", classCode);
+                    intent.putExtra("STD_CODE", userInfo.getCode());
+                    startActivity(intent);
                 } else if (userInfo.getType().equals("teacher") && getStudentList.listStdForTeacher != null) {
                     Intent intent = new Intent(ClassActivity.this, SessionListActivity.class);
                     intent.putExtra("CLASS_CODE", classCode);
@@ -274,6 +284,7 @@ public class ClassActivity extends Activity {
 
 
     public void getStudentArr(final String classCode) {
+
         db = FirebaseFirestore.getInstance();
         final DocumentReference docRef = db.collection("class").document(classCode);
         docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -301,5 +312,50 @@ public class ClassActivity extends Activity {
             }
         });
     }
+    public void getTchName(String tchCode){
+        db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("users").document(tchCode+"@uit.edu.vn");
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        txtTchName.setText(document.getData().get("full_name").toString());
+                    } else {
+                        Log.d("FIRE", "No such document");
+                    }
+                } else {
+                    Log.d("FIRE", "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+    public static BottomNavigationView mBtmView;
+    private int mMenuId;
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // uncheck the other items.
+        mMenuId = item.getItemId();
+//        for (int i = 0; i < mBtmView.getMenu().size(); i++) {
+//            MenuItem menuItem = mBtmView.getMenu().getItem(i);
+//            boolean isChecked = menuItem.getItemId() == item.getItemId();
+//            menuItem.setChecked(isChecked);
+//        }
 
+        switch (item.getItemId()) {
+            case R.id.nav_home: {
+                Intent profile = new Intent(ClassActivity.this, DashboardActivity.class);
+                startActivity(profile);
+            }
+            break;
+            case R.id.nav_score: {
+                Intent profile = new Intent(ClassActivity.this, ProfileActivity.class);
+                startActivity(profile);
+            }
+
+            break;
+        }
+        return true;
+    }
 }

@@ -1,6 +1,7 @@
 package com.app.diemdanhapp;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,10 +24,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -76,11 +83,56 @@ public class SessionListActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 Object obj = listSession.getItemAtPosition(position);
-                Toast.makeText(SessionListActivity.this, "Selected :" + " " + position, Toast.LENGTH_LONG).show();
+//                Toast.makeText(SessionListActivity.this, "Selected :" + " " + (position + 1), Toast.LENGTH_LONG).show();
+                getStudentArr(classCode,position+1);
             }
         });
 
     }
 
+
+    public void getStudentArr(final String classCode, final int session) {
+        db = FirebaseFirestore.getInstance();
+        db.collection("enroll").document(classCode).collection("std").document(session+"")
+        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        String [] strArr = getStudentList(document.getData().get("student").toString());
+                        Log.d("CRE", "Danh sach diem danh co "+String.valueOf(strArr.length));
+                        Intent detail = new Intent(SessionListActivity.this,SessionAttendDetail.class);
+                        detail.putExtra("CLASS_CODE",classCode);
+                        detail.putExtra("STD_ARR",(Serializable) strArr);
+                        detail.putExtra("SESSION",session+"");
+                        startActivity(detail);
+                    } else {
+
+                    }
+                } else {
+
+                }
+            }
+        });
+    }
+
+    public String[] getStudentList(String str) {
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = new JSONArray(str);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String[] strArr = new String[jsonArray.length()];
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                strArr[i] = jsonArray.getString(i);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return strArr;
+    }
 
 }

@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import android.os.Handler;
+import android.provider.Settings;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -116,7 +117,12 @@ public class AttendCreActivity extends AppCompatActivity
                 if (status == START) {
                     if (strCode != null && !strCode.equals("") && strLocation != null && !strLocation.equals("")) {
 //                    Toast.makeText(AttendCreActivity.this, "Create attend", Toast.LENGTH_SHORT).show();
-                        createEnrollSession(curSession,strCode,strLocation);
+                        createEnrollSession(curSession, strCode, strLocation);
+                    } else if (strCode == null || strCode.equals("")) {
+                        getInputCode();
+                    }else if(strLocation == null || strLocation.equals("")){
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
                     }
                 } else if (status == OPENING) {
                     endSession(curSession);
@@ -127,9 +133,16 @@ public class AttendCreActivity extends AppCompatActivity
         txtCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentQr = new Intent(AttendCreActivity.this,QRCodeActivity.class);
-                intentQr.putExtra("QR_CODE",strCode);
-                startActivity(intentQr);
+                Log.d("CRE","Ma QR :"+ strCode);
+                if (!strCode.trim().equals("null") && !strCode.equals("")) {
+
+                    Intent intentQr = new Intent(AttendCreActivity.this, QRCodeActivity.class);
+                    intentQr.putExtra("QR_CODE", strCode);
+                    startActivity(intentQr);
+
+                } else {
+                    getInputCode();
+                }
             }
         });
 
@@ -154,6 +167,7 @@ public class AttendCreActivity extends AppCompatActivity
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                strCode = input.getText().toString();
                 dialog.cancel();
             }
         });
@@ -258,7 +272,7 @@ public class AttendCreActivity extends AppCompatActivity
         });
     }
 
-    public void createEnrollSession(final Long session,String code,String location) {
+    public void createEnrollSession(final Long session, String code, String location) {
         db = FirebaseFirestore.getInstance();
 
         // Add enroll class student info

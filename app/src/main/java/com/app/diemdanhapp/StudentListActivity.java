@@ -1,6 +1,7 @@
 package com.app.diemdanhapp;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -77,7 +78,11 @@ public class StudentListActivity extends Activity {
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 Object obj = listStd.getItemAtPosition(position);
                 Student std = (Student) obj;
-                Toast.makeText(StudentListActivity.this, "Selected :" + " " + std, Toast.LENGTH_LONG).show();
+//                Toast.makeText(StudentListActivity.this, "Selected :" + " " + std, Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(StudentListActivity.this, AttendDetailActivity.class);
+                intent.putExtra("CLASS_CODE", classCode);
+                intent.putExtra("STD_CODE", std.getStdCode());
+                startActivity(intent);
             }
         });
 

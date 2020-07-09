@@ -1,79 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    <FrameLayout
-        android:id="@+id/scrollLayout"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/laytop"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_navigation">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:id="@+id/topView"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:background="@color/colorPrimaryDark" />
+
+        <Button
+            android:id="@+id/btnBack"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:drawableStart="@drawable/arrow_back"
+            android:drawableLeft="@drawable/arrow_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
+
+        <Button
+            android:id="@+id/btnOption"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:drawableStart="@drawable/ic_notifications_48"
+            android:drawableLeft="@drawable/ic_notifications_48"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/appCompatImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/topView"
+            app:layout_constraintEnd_toEndOf="@+id/topView"
+            app:layout_constraintStart_toStartOf="@+id/topView"
+            app:layout_constraintTop_toTopOf="@+id/topView"
+            app:srcCompat="@drawable/profile_user"
+            tools:ignore="MissingConstraints" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/laytop">
 
         <ScrollView
             android:id="@+id/scrollview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
-
-                <View
-                    android:id="@+id/topView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="150dp"
-                    android:background="@color/colorPrimaryDark"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/appCompatImageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="@+id/topView"
-                    app:layout_constraintEnd_toEndOf="@+id/topView"
-                    app:layout_constraintStart_toStartOf="@+id/topView"
-                    app:layout_constraintTop_toBottomOf="@+id/topView"
-                    app:srcCompat="@drawable/profile_user"
-                    tools:ignore="MissingConstraints" />
-
-                <Button
-                    android:id="@+id/btnBack"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
-                    android:drawableStart="@drawable/arrow_back"
-                    android:drawableLeft="@drawable/arrow_back"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="MissingConstraints" />
-
-                <Button
-                    android:id="@+id/buttonTop2"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:drawableStart="@drawable/ic_notifications_48"
-                    android:drawableLeft="@drawable/ic_notifications_48"
-                    app:layout_constraintEnd_toEndOf="@+id/topView"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="MissingConstraints" />
 
                 <TextView
                     android:id="@+id/txtFullname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="120dp"
-                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="120dp"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
@@ -82,14 +84,14 @@
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/appCompatImageView" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/txtStdCode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="120dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="15dp"
                     android:layout_marginEnd="120dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
@@ -106,12 +108,14 @@
                     android:id="@+id/txtEmail"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="20dp"
                     android:drawableStart="@drawable/ic_email_black_48dp"
                     android:drawableLeft="@drawable/ic_email_black_48dp"
                     android:drawablePadding="32dp"
+                    android:foregroundGravity="center_vertical"
                     android:paddingLeft="16dp"
                     android:text="Email "
+                    android:textAlignment="gravity"
                     android:textColor="@android:color/black"
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -127,6 +131,7 @@
                     android:drawableStart="@drawable/ic_birthday_cake"
                     android:drawableLeft="@drawable/ic_birthday_cake"
                     android:drawablePadding="32dp"
+                    android:foregroundGravity="center_vertical"
                     android:paddingLeft="16dp"
                     android:text="DOB"
                     android:textColor="@android:color/black"
@@ -144,6 +149,7 @@
                     android:drawableLeft="@drawable/ic_portfolio"
                     android:drawablePadding="32dp"
                     android:fallbackLineSpacing="false"
+                    android:foregroundGravity="center_vertical"
                     android:paddingLeft="16dp"
                     android:text="Faculty"
                     android:textColor="@android:color/black"
@@ -161,6 +167,7 @@
                     android:drawableLeft="@drawable/ic_portfolio"
                     android:drawablePadding="32dp"
                     android:fallbackLineSpacing="false"
+                    android:foregroundGravity="center_vertical"
                     android:paddingLeft="16dp"
                     android:text="Class"
                     android:textColor="@android:color/black"
@@ -178,6 +185,7 @@
                     android:drawableStart="@drawable/ic_class_black_48dp"
                     android:drawableLeft="@drawable/ic_class_black_48dp"
                     android:drawablePadding="32dp"
+                    android:foregroundGravity="center_vertical"
                     android:paddingLeft="12dp"
                     android:text="YearCode"
                     android:textColor="@android:color/black"
@@ -191,11 +199,12 @@
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
-                    android:drawableStart="@drawable/ic_class_black_48dp"
-                    android:drawableLeft="@drawable/ic_class_black_48dp"
+                    android:drawableStart="@drawable/ic_phone_black_24dp"
+                    android:drawableLeft="@drawable/ic_phone_black_24dp"
                     android:drawablePadding="32dp"
+                    android:foregroundGravity="clip_vertical"
                     android:paddingLeft="12dp"
-                    android:text="Phone    "
+                    android:text="Phone "
                     android:textColor="@android:color/black"
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -203,27 +212,26 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txtClass" />
 
-                <Button
-                    android:id="@+id/buttonBot"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="250dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/round_bg"
-                    android:text="Update"
-                    android:textAllCaps="false"
-                    android:textColor="@android:color/white"
-                    android:textSize="25sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.496"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtPhone"
-                    app:layout_constraintVertical_bias="1.0" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
-    </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/buttonBot"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/round_bg"
+        android:text="Update"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -231,11 +239,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="?android:attr/windowBackground"
-        app:menu="@menu/button_navigation"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/button_navigation" />
 
 
-
-
-
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

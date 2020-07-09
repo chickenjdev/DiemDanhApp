@@ -15,6 +15,9 @@ public class userInfo {
     private static String year_code;
     private static String type ="std";
 
+
+    private static String class_code;
+
     public userInfo(Map<String, Object> data){
 
         setFull_name((String) data.get("full_name"));
@@ -25,6 +28,7 @@ public class userInfo {
         setPhone((String) data.get("phone"));
         setYear_code((String) data.get("year_code"));
         setType((String) data.get("type"));
+        setClass_code((String) data.get("class"));
         Log.d("CRE",getFull_name() +"");
     }
 
@@ -99,5 +103,12 @@ public class userInfo {
         this.year_code = year_code;
     }
 
+    public static String getClass_code() {
+        return class_code;
+    }
+
+    public static void setClass_code(String class_code) {
+        userInfo.class_code = class_code;
+    }
 
 }

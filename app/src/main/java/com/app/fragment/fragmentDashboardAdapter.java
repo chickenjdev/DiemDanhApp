@@ -18,7 +18,7 @@ import com.app.model.userInfo;
 public class fragmentDashboardAdapter extends FragmentPagerAdapter {
 
     static Context context;
-    static fragmentDashboardModel fragmentDashModel ;
+    static fragmentDashboardModel fragmentDashModel;
 
 
     public fragmentDashboardAdapter(FragmentManager fm, Context context) {
@@ -37,7 +37,10 @@ public class fragmentDashboardAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+
+        if (userInfo.getType().equals("std")) {
+            return 2;
+        } else return 1;
     }
 
     @Override
@@ -76,14 +79,16 @@ public class fragmentDashboardAdapter extends FragmentPagerAdapter {
 
             switch (getArguments().getInt(KEY)) {
                 case 1:
-                    if(userInfo.getType().equals("std")){
+                    if (userInfo.getType().equals("std")) {
                         fragmentDashModel.getDataMyClass(scrollLayout);
-                    }else if(userInfo.getType().equals("teacher")){
+                    } else if (userInfo.getType().equals("teacher")) {
                         fragmentDashModel.getDataClassTeacher(scrollLayout);
                     }
                     break;
                 case 2:
-                    fragmentDashModel.getDataAllClass(scrollLayout);
+                    if (userInfo.getType().equals("std")) {
+                        fragmentDashModel.getDataAllClass(scrollLayout);
+                    }
                     break;
                 default:
                     break;
@@ -91,7 +96,6 @@ public class fragmentDashboardAdapter extends FragmentPagerAdapter {
 
             return rootView;
         }
-
 
 
     }

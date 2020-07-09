@@ -75,7 +75,37 @@
             android:label="SessionListActivity">
 
         </activity>
+        <activity
+            android:name="com.app.diemdanhapp.AttendDetailActivity"
 
+            android:label="AttendDetailActivity">
+
+        </activity>
+        <activity
+            android:launchMode = "singleInstance"
+            android:name="com.app.diemdanhapp.LoadingActivity"
+
+            android:label="AttendDetailActivity">
+
+        </activity>
+        <activity
+            android:name="com.app.diemdanhapp.EnrollActivity"
+
+            android:label="EnrollActivity">
+
+        </activity>
+        <activity
+            android:name="com.app.diemdanhapp.SessionAttendDetail"
+
+            android:label="SessionAttendDetail">
+
+        </activity>
+        <activity
+            android:name="com.app.diemdanhapp.CreateClassActivity"
+
+            android:label="CreateClassActivity">
+
+        </activity>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
