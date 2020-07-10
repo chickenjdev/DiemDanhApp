@@ -4,8 +4,9 @@ Cập nhật :
 - Thêm tính năng export dữ liệu điểm danh ra file csv
 - Chi tiết được trình bày trong slide ( \resource )
 
-- user test Giảng viên :  khoi.nht ,pass 123456
-            Sinh viên : 17520001 -> 17520030 , pass : 123456
+- user test 
+ + Giảng viên :  khoi.nht ,pass 123456
+ + Sinh viên : 17520001 -> 17520030 , pass : 123456
 Các chức năng của app điểm danh 
 
 Dành cho giảng viên :
