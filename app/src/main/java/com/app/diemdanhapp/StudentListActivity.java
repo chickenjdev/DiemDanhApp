@@ -114,14 +114,13 @@ public class StudentListActivity extends Activity {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= 23) {
                     if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                         Log.v("CRE", "Permission is granted");
                         //File write logic here
                     } else {
                         ActivityCompat.requestPermissions(StudentListActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                     }
-                }
+
                 try {
                     csvWrite(header, data);
                 } catch (IOException e) {
@@ -188,7 +187,11 @@ public class StudentListActivity extends Activity {
                                                 } else row.add(" No");
                                             }
 //                                            Log.w("FIRE", row + "");
-                                            data[finalI] = row;
+                                            try{
+                                                data[finalI] = row;
+                                            }catch (Exception e){
+
+                                            }
 
                                         } else {
                                             Log.w("FIRE", "Error getting documents.", task.getException());
