@@ -1,4 +1,9 @@
 # DiemDanhApp
+
+Cập nhật :
+- Thêm tính năng export dữ liệu điểm danh ra file csv
+- Chi tiết được trình bày trong slide ( \resource )
+
 Các chức năng của app điểm danh 
 
 Dành cho giảng viên :
