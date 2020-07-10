@@ -7,6 +7,7 @@ Cập nhật :
 - user test 
  + Giảng viên :  khoi.nht ,pass 123456
  + Sinh viên : 17520001 -> 17520030 , pass : 123456
+ 
 Các chức năng của app điểm danh 
 
 Dành cho giảng viên :
